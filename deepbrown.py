@@ -58,5 +58,64 @@ class deepbrown(object):
             row -= 1
         return placed
 
-guy = deepbrown()
-guy.display_board()
+    # Literally stole this function from StackOverflow because I'm lazy and not
+    # trying to create a Connect-4 simulator. I'm revolutionizing AI!
+    # So credit to Matthew Hanson and SuperBiasedMan
+    # link: https://stackoverflow.com/questions/29949169/python-connect-4-check-win-function
+    def checkWin(self, tile):
+
+        board = self.m_board
+
+        # check horizontal spaces
+        for y in range(NUM_ROWS):
+            for x in range(NUM_COLS - 3):
+                if board[x][y] == tile and board[x+1][y] == tile and \
+                board[x+2][y] == tile and board[x+3][y] == tile:
+                    return True
+
+        # check vertical spaces
+        for x in range(NUM_COLS):
+            for y in range(NUM_ROWS - 3):
+                if board[x][y] == tile and board[x][y+1] == tile and \
+                board[x][y+2] == tile and board[x][y+3] == tile:
+                    return True
+
+        # check / diagonal spaces
+        for x in range(NUM_COLS - 3):
+            for y in range(3, NUM_ROWS):
+                if board[x][y] == tile and board[x+1][y-1] == tile and \
+                board[x+2][y-2] == tile and board[x+3][y-3] == tile:
+                    return True
+
+        # check \ diagonal spaces
+        for x in range(NUM_COLS - 3):
+            for y in range(NUM_ROWS - 3):
+                if board[x][y] == tile and board[x+1][y+1] == tile and \
+                board[x+2][y+2] == tile and board[x+3][y+3] == tile:
+                    return True
+
+        return False
+
+    # TODO: Implement brown_move
+    def brown_move(self):
+
+    # TODO: Implement player_move
+    def player_move(self):
+
+    def run_game(self, brown_first=False):
+        player_wins = False
+        brown_wins = False
+
+        if brown_first:
+            brown_wins = brown_move()
+
+        while not brown_wins and not player_wins:
+            player_wins = player_move()
+
+            if player_wins:
+                break
+
+            brown_wins = brown_move()
+
+brown = deepbrown()
+brown.display_board()

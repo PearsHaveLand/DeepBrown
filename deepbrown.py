@@ -4,6 +4,8 @@ HORIZONTAL_EDGE = '|'
 BOTTOM_LABEL = "  1 2 3 4 5 6 7"
 NUM_ROWS = 6
 NUM_COLS = 7
+PLAYER_CHAR = 'X'
+BROWN_CHAR = 'O'
 
 # helper for quickly printing list contents without the rest of the list
 def list_contents(list):
@@ -62,45 +64,82 @@ class deepbrown(object):
     # trying to create a Connect-4 simulator. I'm revolutionizing AI!
     # So credit to Matthew Hanson and SuperBiasedMan
     # link: https://stackoverflow.com/questions/29949169/python-connect-4-check-win-function
-    def checkWin(self, tile):
+    def check_win(self, tile):
 
         board = self.m_board
 
         # check horizontal spaces
         for y in range(NUM_ROWS):
             for x in range(NUM_COLS - 3):
-                if board[x][y] == tile and board[x+1][y] == tile and \
-                board[x+2][y] == tile and board[x+3][y] == tile:
+                if board[y][x] == tile and board[y][x+1] == tile and \
+                board[y][x+2] == tile and board[y][x+3] == tile:
                     return True
 
         # check vertical spaces
         for x in range(NUM_COLS):
             for y in range(NUM_ROWS - 3):
-                if board[x][y] == tile and board[x][y+1] == tile and \
-                board[x][y+2] == tile and board[x][y+3] == tile:
+                if board[y][x] == tile and board[y+1][x] == tile and \
+                board[y+2][x] == tile and board[y+3][x] == tile:
                     return True
 
         # check / diagonal spaces
         for x in range(NUM_COLS - 3):
             for y in range(3, NUM_ROWS):
-                if board[x][y] == tile and board[x+1][y-1] == tile and \
-                board[x+2][y-2] == tile and board[x+3][y-3] == tile:
+                if board[y][x] == tile and board[y-1][x+1] == tile and \
+                board[y-2][x+2] == tile and board[y-3][x+3] == tile:
                     return True
 
         # check \ diagonal spaces
         for x in range(NUM_COLS - 3):
             for y in range(NUM_ROWS - 3):
-                if board[x][y] == tile and board[x+1][y+1] == tile and \
-                board[x+2][y+2] == tile and board[x+3][y+3] == tile:
+                if board[y][x] == tile and board[y+1][x+1] == tile and \
+                board[y+2][x+2] == tile and board[y+3][x+3] == tile:
                     return True
 
         return False
 
     # TODO: Implement brown_move
     def brown_move(self):
+        return
+        
+    def prompt_input(self):
+        user_input = -1
 
-    # TODO: Implement player_move
+        # Until the user inputs a valid column digit, keep prompting
+        while user_input < 1 or user_input > NUM_COLS:
+            try:
+                user_input = int(input("Enter the column number to drop your piece: "))
+
+            # If the user enters a string, handle gracefully
+            except ValueError:
+                user_input = -1
+        # Subtract 1 to use column as index
+        return user_input - 1
+
+    # Check if the topmost row in the column is valid
+    def check_col(self, col):
+        valid = False
+
+        # If topomost space is empty, the column is valid for placement
+        if self.m_board[NUM_ROWS - 1][col] == EMPTY_SPACE:
+            valid = True
+        return valid
+
+    # Handles input prompting and handling, as well as the logic for valid column choice
     def player_move(self):
+        valid_col = False
+        chosen_col = -1
+
+        # Continually prompt user for input until valid column with space is entered
+        while not valid_col:
+            chosen_col = self.prompt_input()
+            valid_col = self.check_col(chosen_col)
+            if not valid_col:
+                print("Chosen column is full, choose a different column.")
+
+        # Column choice is valid, a victory test
+        self.place_piece(PLAYER_CHAR, chosen_col)
+        return self.check_win(PLAYER_CHAR)
 
     def run_game(self, brown_first=False):
         player_wins = False
@@ -110,12 +149,19 @@ class deepbrown(object):
             brown_wins = brown_move()
 
         while not brown_wins and not player_wins:
-            player_wins = player_move()
+            self.display_board()
+            player_wins = self.player_move()
 
             if player_wins:
                 break
 
-            brown_wins = brown_move()
+            brown_wins = self.brown_move()
+
+        self.display_board()
+        if player_wins:
+            print("You win!")
+        if brown_wins:
+            print("You lose.")
 
 brown = deepbrown()
-brown.display_board()
+brown.run_game()

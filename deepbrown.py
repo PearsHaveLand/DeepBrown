@@ -1,3 +1,5 @@
+import copy
+
 EMPTY_SPACE = ' '
 VERTICAL_EDGE = "-----------------"
 HORIZONTAL_EDGE = '|'
@@ -5,7 +7,7 @@ BOTTOM_LABEL = "  1 2 3 4 5 6 7"
 NUM_ROWS = 6
 NUM_COLS = 7
 PLAYER_CHAR = 'X'
-blue_CHAR = 'O'
+BLUE_CHAR = 'O'
 
 # helper for quickly printing list contents without the rest of the list
 def list_contents(list):
@@ -29,12 +31,12 @@ class flatblue(object):
             self.m_board.append(row)
 
     # prints the board to the screen
-    def display_board(self):
+    def display_board(self, board):
         print(VERTICAL_EDGE)
 
         # print board in reverse, since row 0 would be output first
         #   keeping row 0 at the bottom helps me keep my sanity
-        for row in reversed(self.m_board):
+        for row in reversed(board):
             print(HORIZONTAL_EDGE, list_contents(row), HORIZONTAL_EDGE, sep='')
         print(VERTICAL_EDGE)
         print(BOTTOM_LABEL)
@@ -100,25 +102,35 @@ class flatblue(object):
 
     # Determines which legal moves can be made
     # Returns a list of non-full columns
-    def get_legal_moves(self):
+    def get_legal_moves(self, board):
         legal_moves = []
 
         # Check if each column is full
         for col in range(NUM_COLS):
 
             # If not full, append to list for returning
-            if self.check_col(col):
+            if self.check_col(col, board):
                 legal_moves.append(col)
+
         return legal_moves
 
-    def simulate_move(self, board, col):
-        return
+    def simulate_move(self, board, char, col):
+        sim_board = copy.deepcopy(board)
+        self.place_piece(char, col, sim_board)
+        return sim_board
 
     # TODO: Implement blue_move
     def blue_move(self):
-        valid_moves = self.get_legal_moves()
-        #for move in valid_moves:
-        #    opponent_moves =
+        valid_moves = self.get_legal_moves(self.m_board)
+
+        # Simulate each possible valid move
+        for b_move in valid_moves:
+            board = self.simulate_move(self.m_board, BLUE_CHAR, b_move)
+            opponent_moves = self.get_legal_moves(board)
+
+            for o_move in opponent_moves:
+                next_board = self.simulate_move(board, PLAYER_CHAR, o_move)
+
         return
 
     def prompt_input(self):
@@ -136,11 +148,11 @@ class flatblue(object):
         return user_input - 1
 
     # Check if the topmost row in the column is valid
-    def check_col(self, col):
+    def check_col(self, col, board):
         valid = False
 
         # If topomost space is empty, the column is valid for placement
-        if self.m_board[NUM_ROWS - 1][col] == EMPTY_SPACE:
+        if board[NUM_ROWS - 1][col] == EMPTY_SPACE:
             valid = True
         return valid
 
@@ -152,7 +164,7 @@ class flatblue(object):
         # Continually prompt user for input until valid column with space is entered
         while not valid_col:
             chosen_col = self.prompt_input()
-            valid_col = self.check_col(chosen_col)
+            valid_col = self.check_col(chosen_col, self.m_board)
             if not valid_col:
                 print("Chosen column is full, choose a different column.")
 
@@ -168,7 +180,7 @@ class flatblue(object):
             blue_wins = blue_move()
 
         while not blue_wins and not player_wins:
-            self.display_board()
+            self.display_board(self.m_board)
             player_wins = self.player_move()
 
             if player_wins:
@@ -176,7 +188,7 @@ class flatblue(object):
 
             blue_wins = self.blue_move()
 
-        self.display_board()
+        self.display_board(self.m_board)
         if player_wins:
             print("You win!")
         if blue_wins:

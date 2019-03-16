@@ -5,7 +5,7 @@ BOTTOM_LABEL = "  1 2 3 4 5 6 7"
 NUM_ROWS = 6
 NUM_COLS = 7
 PLAYER_CHAR = 'X'
-BROWN_CHAR = 'O'
+blue_CHAR = 'O'
 
 # helper for quickly printing list contents without the rest of the list
 def list_contents(list):
@@ -14,7 +14,7 @@ def list_contents(list):
         ret += str(item) + ' '
     return ret
 
-class deepbrown(object):
+class flatblue(object):
     def __init__(self):
         # initialize game board
         self.m_board = []
@@ -98,10 +98,10 @@ class deepbrown(object):
 
         return False
 
-    # TODO: Implement brown_move
-    def brown_move(self):
+    # TODO: Implement blue_move
+    def blue_move(self):
         return
-        
+
     def prompt_input(self):
         user_input = -1
 
@@ -141,27 +141,27 @@ class deepbrown(object):
         self.place_piece(PLAYER_CHAR, chosen_col)
         return self.check_win(PLAYER_CHAR)
 
-    def run_game(self, brown_first=False):
+    def run_game(self, blue_first=False):
         player_wins = False
-        brown_wins = False
+        blue_wins = False
 
-        if brown_first:
-            brown_wins = brown_move()
+        if blue_first:
+            blue_wins = blue_move()
 
-        while not brown_wins and not player_wins:
+        while not blue_wins and not player_wins:
             self.display_board()
             player_wins = self.player_move()
 
             if player_wins:
                 break
 
-            brown_wins = self.brown_move()
+            blue_wins = self.blue_move()
 
         self.display_board()
         if player_wins:
             print("You win!")
-        if brown_wins:
+        if blue_wins:
             print("You lose.")
 
-brown = deepbrown()
-brown.run_game()
+blue = flatblue()
+blue.run_game()

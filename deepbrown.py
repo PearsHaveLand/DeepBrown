@@ -41,7 +41,7 @@ class flatblue(object):
 
     # attempts to place a piece of the given character into the given column
     # relies on exterior functions to check for error values
-    def place_piece(self, player_char, col):
+    def place_piece(self, player_char, col, board):
         row = NUM_ROWS - 1
         placed = False
 
@@ -49,13 +49,13 @@ class flatblue(object):
         while (row >= 0) and (not placed):
             # When not at the bottom, need to account for space below
             if row > 0:
-                if self.m_board[row][col] == EMPTY_SPACE and self.m_board[row-1][col] != EMPTY_SPACE:
-                    self.m_board[row][col] = player_char
+                if board[row][col] == EMPTY_SPACE and board[row-1][col] != EMPTY_SPACE:
+                    board[row][col] = player_char
                     placed = True
             # When at bottom, only need to account current space
             elif row == 0:
-                if self.m_board[row][col] == EMPTY_SPACE:
-                    self.m_board[row][col] = player_char
+                if board[row][col] == EMPTY_SPACE:
+                    board[row][col] = player_char
                     placed = True
             row -= 1
         return placed
@@ -111,9 +111,14 @@ class flatblue(object):
                 legal_moves.append(col)
         return legal_moves
 
+    def simulate_move(self, board, col):
+        return
+
     # TODO: Implement blue_move
     def blue_move(self):
         valid_moves = self.get_legal_moves()
+        #for move in valid_moves:
+        #    opponent_moves =
         return
 
     def prompt_input(self):
@@ -152,7 +157,7 @@ class flatblue(object):
                 print("Chosen column is full, choose a different column.")
 
         # Column choice is valid, a victory test
-        self.place_piece(PLAYER_CHAR, chosen_col)
+        self.place_piece(PLAYER_CHAR, chosen_col, self.m_board)
         return self.check_win(PLAYER_CHAR)
 
     def run_game(self, blue_first=False):

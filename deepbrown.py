@@ -98,8 +98,22 @@ class flatblue(object):
 
         return False
 
+    # Determines which legal moves can be made
+    # Returns a list of non-full columns
+    def get_legal_moves(self):
+        legal_moves = []
+
+        # Check if each column is full
+        for col in range(NUM_COLS):
+
+            # If not full, append to list for returning
+            if self.check_col(col):
+                legal_moves.append(col)
+        return legal_moves
+
     # TODO: Implement blue_move
     def blue_move(self):
+        valid_moves = self.get_legal_moves()
         return
 
     def prompt_input(self):
